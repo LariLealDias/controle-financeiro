@@ -1,62 +1,57 @@
-import expenses from "../models/Expense.js";
+import Expenses from "../models/Expense.js";
 
 class expensesController{
-    static registerExpense = (req, res) => {
-        let expense = new expenses(req.body);
-
-        expense.save((err) =>{
-            if(err){
-                res.status(500).send({message: `erro ao cadastrar nova dispesa ${err.message}`});
-            }else{
-                res.send(expense.toJSON());
-            }
-        })
+    // adding async in the function
+    static registerExpense = async (req, res) => {
+        const { descricao, valor, data } = req.body;
+        try {
+            const expenses = await Expenses.create({descricao, valor, data});
+            return res.status(201).json(expenses);
+        } catch (error) {
+            return res.status(400).json({ message: 'erro ao cadastrar nova dispesa', error });
+        }
     }
 
-    static listExpense = (req, res) =>{
-        expenses.find((err, expenses) => {
-            if(err){
-                res.status(500).send({message: `não foi possivel encontrar a lista de despesa ${err.message}`});
-            }else{
-                res.json(expenses);
-            }
-        })
+    static listExpense = async (req, res) => {
+        try {
+            const data = await Expenses.find();
+            return res.status(200).json(data);
+        } catch (error) {
+            return res.status(400).json({ message: 'não foi possivel encontrar a lista de despesa', error });
+        }
     }
 
-    static listingExpenseById = (req, res) => {
-        const id = req.params.id; 
-
-        expenses.findById(id, (err, expenses) => {
-            if(err){
-                res.status(500).send({message: `id nao localizado ${err.message}`});
-            } else{
-                res.send(expenses);
-            }
-        })
+    static listingExpenseById = async (req, res) => {
+        const { id } = req.params;
+        try {
+            const data = await Expenses.findById(id);
+            return res.status(200).json(data);
+        } catch (error) {
+            return res.status(400).json({ message: 'id não localizado', error });
+        }
     }
 
-    static updateExpense = (req, res) =>{
-        const id = req.params.id;
-
-        expenses.findByIdAndUpdate(id, {$set: req.body}, (err, expenses) => {
-            if(err){
-                res.status(500).send({message: `falha ao atualizar id ${err.message}`});
-            }else{
-                res.send('sucesso')
-            }
-        })
+    static updateExpense = async (req, res) => {
+        const { id } = req.params;
+        const { newInfo } = req.body;
+        try {
+            await Expenses.findOneAndUpdate(newInfo, {where: { id: id } });
+            const updatedData = await Expenses.findById(id);
+            console.log('Atualizado com sucesso!');
+            return res.status(200).json(updatedData);
+        } catch (error) {
+            return res.status(400).json({ message: 'falha ao atualizar id', error });    
+        }
     }
 
-    static deleteExpense = (req, res) => {
-        const id = req.params.id;
-
-        expenses.findByIdAndDelete(id, (err) => {
-            if(err){
-                res.status(500).send({message: `falha ao deletar id ${err.message}`});
-            }else{
-                res.send('deletado com sucesso');
-            }
-        })
+    static deleteExpense = async (req, res) => {
+        const { id } = req.params;
+        try {
+            await Expenses.findByIdAndDelete(id);
+            return res.status(200).json({ message: 'Id deletado!' });
+        } catch (error) {
+            return res.status(400).json({ message: 'falha ao deletar id', error });
+        }
     }
 }
 

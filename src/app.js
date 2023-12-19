@@ -1,18 +1,22 @@
+import dotenv from 'dotenv';
 import express from 'express';
-import db from './config/dbConnect.js';
 import routes from './routes/index.js'
+import mongoose from 'mongoose';
 
-db.on('error', console.log.bind(console, 'erro de conexão'));
-
-db.once('open', () => {
-    console.log('conexão com o banco feita com sucesso');
-})
-
-
+dotenv.config();
 const app = express();
 
-app.use(express.json());
+// MongoDb connection
+// mongoose.connect(process.env.DB_URI)
+// .then(() => {
+//     console.log('Connect to database')
+// }).catch((error) => {
+//     console.log('MondoDB connection error: ', error)
+// });
 
+app.use(express.json());
 routes(app);
 
-export default app;
+app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
+});

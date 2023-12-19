@@ -7,6 +7,6 @@ const incomeSchema = new mongoose.Schema({
     data: {type: String, required: true, unique: true }
 });
 
-const incomes = mongoose.model('receitas', incomeSchema);
+const Incomes = mongoose.model('receitas', incomeSchema);
 
-export default incomes;
+export default Incomes;

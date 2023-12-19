@@ -7,7 +7,7 @@ const expenseSchema = new mongoose.Schema({
     data: {type: Date, required: true, unique: true }
 });
 
-const expenses = mongoose.model('despesas', expenseSchema);
+const Expenses = mongoose.model('despesas', expenseSchema);
 
-export default expenses;
+export default Expenses;
 
